@@ -42,7 +42,7 @@ const isDark = document.documentElement.classList.contains("dark");
       </div>
     </div>
 
-    <div class="flex justify-between items-end">
+    <div class="flex justify-end items-end">
       <p class="text-sm text-gray-500 dark:text-gray-400">
         총
         <span class="font-bold text-blue-600 dark:text-blue-400">{{
@@ -52,12 +52,12 @@ const isDark = document.documentElement.classList.contains("dark");
       </p>
 
       <!-- 성능 지표 -->
-      <div
+      <!-- <div
         v-if="!loading"
         class="text-xs bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 px-2 py-1 rounded border border-red-100 dark:border-red-800/50 font-mono"
       >
         Render: <b>{{ renderTime }}ms</b>
-      </div>
+      </div> -->
     </div>
   </header>
 </template>
