@@ -1,7 +1,7 @@
 import { fakerKO as faker } from "@faker-js/faker";
 
 // types
-export type JobStatus = "RECRUITING" | "FULL" | "IN_PROGRESS" | "DONE";
+export type JobStatus = "모집중" | "모집완료" | "작업중" | "작업완료";
 export type AttendanceStatus = "APPLIED" | "ON_DUTY" | "OFF_DUTY" | "NO_SHOW";
 
 export interface Worker {
@@ -14,6 +14,7 @@ export interface Worker {
 export interface Job {
   id: string;
   siteName: string;
+  location: string;
   role: string;
   status: JobStatus;
   requiredCount: number;
@@ -47,15 +48,6 @@ export const generateJobs = (count: number): Job[] => {
     "용접공",
     "배관공",
   ];
-  const sitePrefixes = [
-    "잠실",
-    "반포",
-    "둔촌",
-    "한남",
-    "압구정",
-    "성수",
-    "마곡",
-  ];
   const siteSuffixes = [
     "재건축",
     "리모델링",
@@ -68,17 +60,21 @@ export const generateJobs = (count: number): Job[] => {
     const required = faker.number.int({ min: 2, max: 20 });
     const assigned = faker.number.int({ min: 0, max: required });
 
-    const siteName = `${faker.helpers.arrayElement(
-      sitePrefixes
-    )} ${faker.company.name().slice(0, 2)}건설 ${faker.helpers.arrayElement(
-      siteSuffixes
-    )}`;
+    const siteName = `${faker.company
+      .name()
+      .slice(0, 2)}건설 ${faker.helpers.arrayElement(siteSuffixes)}`;
 
     return {
       id: faker.string.uuid(),
       siteName,
       role: faker.helpers.arrayElement(roles),
-      status: assigned >= required ? "FULL" : "RECRUITING",
+      location: `${faker.location.city()} ${faker.location.street()}`,
+      status: faker.helpers.arrayElement([
+        "모집중",
+        "모집완료",
+        "작업중",
+        "작업완료",
+      ]),
       requiredCount: required,
       assignedCount: assigned,
       wage: faker.number.int({ min: 13, max: 25 }) * 10000,

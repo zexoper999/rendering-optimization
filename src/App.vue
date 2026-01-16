@@ -20,7 +20,7 @@ const toggleDarkMode = () => {
 
 const loadData = async () => {
   loading.value = true;
-  jobs.value = []; // 초기화 (메모리 해제 효과)
+  jobs.value = []; // 초기화
 
   setTimeout(async () => {
     const start = performance.now();
