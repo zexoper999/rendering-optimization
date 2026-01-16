@@ -2,72 +2,79 @@
 import { ref, onMounted, nextTick } from "vue";
 import { generateJobs, type Job } from "./utils/mockData";
 import JobCard from "./components/JobCard.vue";
+import Header from "./components/Header.vue";
 
 const jobs = ref<Job[]>([]);
 const loading = ref(true);
-const renderTime = ref(0); // 렌더링 시간 측정용
+const renderTime = ref(0);
+const isDark = ref(false);
+
+const toggleDarkMode = () => {
+  isDark.value = !isDark.value;
+  if (isDark.value) {
+    document.documentElement.classList.add("dark");
+  } else {
+    document.documentElement.classList.remove("dark");
+  }
+};
 
 const loadData = async () => {
   loading.value = true;
+  jobs.value = []; // 초기화 (메모리 해제 효과)
 
-  // 1. 데이터 생성 (약간의 지연 시뮬레이션)
   setTimeout(async () => {
     const start = performance.now();
 
-    // 🔥 10,000개 데이터 생성 (무거움)
+    // 데이터 생성
     jobs.value = generateJobs(10000);
 
-    // 2. 렌더링 완료 대기 및 시간 측정
-    await nextTick(); // DOM 업데이트 대기
-    const end = performance.now();
-    renderTime.value = Math.round(end - start);
+    // DOM 업데이트 대기
+    await nextTick();
 
-    loading.value = false;
+    // v-for 렌더링이 끝난 직후 시간 측정
+    setTimeout(() => {
+      const end = performance.now();
+      renderTime.value = Math.round(end - start);
+      loading.value = false;
+    }, 0);
   }, 100);
 };
 
 onMounted(() => {
+  // 초기 다크모드 적용
+  document.documentElement.classList.add("dark");
+  isDark.value = true;
   loadData();
 });
 </script>
 
 <template>
-  <div class="max-w-md mx-auto bg-gray-50 min-h-screen flex flex-col">
+  <div
+    class="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col transition-colors duration-300"
+  >
     <!-- 헤더 -->
-    <header
-      class="bg-white p-4 sticky top-0 z-10 border-b border-gray-200 shadow-sm"
-    >
-      <h1 class="text-xl font-bold text-gray-900">🚧 현장 작업 관리</h1>
-      <p class="text-sm text-gray-500 mt-1">
-        총
-        <span class="font-bold text-blue-600">{{
-          jobs.length.toLocaleString()
-        }}</span
-        >개 작업
-      </p>
+    <Header
+      :count="jobs.length"
+      :render-time="renderTime"
+      :loading="loading"
+      @toggle-dark="toggleDarkMode"
+      @reload="loadData"
+    />
 
-      <!-- 성능 측정 결과 표시 -->
-      <div
-        v-if="!loading"
-        class="mt-2 text-xs bg-red-50 text-red-600 p-2 rounded border border-red-100"
-      >
-        ⏱️ 렌더링 소요 시간: <b>{{ renderTime }}ms</b>
-        <br />
-        (스크롤이 버벅거리는지 확인해보세요!)
-      </div>
-    </header>
-
-    <!-- 메인 리스트 영역 -->
-    <main class="flex-1 p-4">
+    <!-- 메인 리스트 -->
+    <main class="flex-1 p-4 max-w-md mx-auto w-full">
       <div
         v-if="loading"
-        class="flex justify-center items-center h-64 text-gray-500"
+        class="flex flex-col items-center justify-center h-64 text-gray-500 dark:text-gray-400 gap-2"
       >
-        데이터 로딩 중... (렉 걸릴 준비 중 💦)
+        <div
+          class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"
+        ></div>
+        <p>데이터({{ jobs.length.toLocaleString() }}건) 로딩 중...</p>
       </div>
 
-      <!-- ☠️ 성능 저하의 주범: 가상 스크롤 없는 v-for -->
       <div v-else class="flex flex-col">
+        <!-- AS-IS: 반복 -->
         <JobCard v-for="job in jobs" :key="job.id" :job="job" />
       </div>
     </main>
