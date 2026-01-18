@@ -24,11 +24,11 @@
 ---
 
 ### 1️⃣ AS-IS (성능 저하)
-![AS-IS Performance](![Image](https://github.com/user-attachments/assets/4584dde9-853c-4dd0-b05c-4812e32c9bca))
+![Image](https://github.com/user-attachments/assets/4584dde9-853c-4dd0-b05c-4812e32c9bca)
 > **Total Blocking Time 발생:** 1만 개의 컴포넌트를 한 번에 그리느라 브라우저가 약 4초간 멈추며, 스크롤 시 심한 끊김(Jank) 현상이 발생합니다.
 
 ### 2️⃣ TO-BE (최적화 적용)
-![TO-BE Performance](![Image](https://github.com/user-attachments/assets/0a4fe8f8-93b3-4585-8623-4328c0791f65))
+![Image](https://github.com/user-attachments/assets/0a4fe8f8-93b3-4585-8623-4328c0791f65)
 > **Virtual Scroll 적용:** 화면에 보이는 영역(약 20개)만 렌더링하고, 스크롤 시 재활용하는 방식으로 **60fps 부드러운 스크롤**을 구현했습니다.
 
 ---
