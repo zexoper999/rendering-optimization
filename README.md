@@ -19,7 +19,7 @@
 | **User Experience** | 초기 로딩 4초 멈춤 (Freezing) | 즉시 반응 (Non-blocking) | **쾌적** |
 
 > **📉 [핵심 성과]**  
-> 데이터 생성(Scripting) 시간을 제외한 **브라우저 렌더링 부하(Rendering + Painting)**를 **2,329ms → 50ms** 수준으로 최적화하여, 메인 스레드 차단(Blocking) 문제를 해결했습니다.
+> 데이터 생성(Scripting) 시간을 제외한 브라우저 렌더링 부하(Rendering + Painting)를 **2,329ms → 50ms** 수준으로 최적화하여, 메인 스레드 차단(Blocking) 문제를 해결했습니다.
 
 ---
 
@@ -42,10 +42,10 @@
 <!-- GridToBe.vue -->
 <script setup>
 const rowVirtualizer = useVirtualizer({
-  count: jobs.value.length, // 전체 10,000개
+  count: jobs.value.length, // 데이터 갯수
   getScrollElement: () => parentRef.value,
   estimateSize: () => 140, // 아이템 예상 높이
-  overscan: 5, // 스크롤 시 흰 화면 방지를 위한 여유분 렌더링
+  overscan: 5, // 스크롤 시 흰 화면 방지를 위한 우선 렌더링
 });
 </script>
 
@@ -61,13 +61,38 @@ const rowVirtualizer = useVirtualizer({
 ```
 
 ### 2. 동적 높이 측정
-각 행(Row) 내부에 아코디언(Collapse) 기능이 있어 높이가 가변적입니다. measureElement를 사용하여 펼쳐진 높이를 실시간으로 재계산하고, 자연스러운 스크롤 위치를 유지합니다.
+각 행(Row) 내부에 아코디언(Collapse) 기능이 있어 높이가 가변적입니다. `measureElement`를 사용하여 펼쳐진 높이를 실시간으로 재계산하고, 자연스러운 스크롤 위치를 유지합니다.
 
 ```vue
-<div
-  :ref="(el) => rowVirtualizer.measureElement(el)" 
-  ...
->
-  <JobCard :job="jobs[virtualRow.index]" />
-</div>
+<template>
+  <div
+    :ref="(el) => rowVirtualizer.measureElement(el)" 
+    :data-index="virtualRow.index"
+    :style="{ transform: `translateY(${virtualRow.start}px)` }"
+  >
+    <JobCard :job="jobs[virtualRow.index]" />
+  </div>
+</template>
 ```
+
+---
+
+## 🚀 실행 방법
+
+```bash
+# 의존성 설치
+npm install
+
+# 개발 서버 실행
+npm run dev
+
+# 빌드
+npm run build
+```
+
+---
+
+1. **Virtual Scrolling**: 화면에 보이는 영역만 렌더링하여 대규모 데이터 처리
+2. **동적 높이 측정**: `measureElement`로 가변 높이 컴포넌트 대응
+3. **Reactive Count**: getter 함수를 사용한 반응형 아이템 개수 관리
+4. **Performance Optimization**: DOM 노드 수를 99.8% 감소시켜 렌더링 비용 최소화
