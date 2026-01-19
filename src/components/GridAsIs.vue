@@ -26,7 +26,7 @@
         const start = performance.now();
     
         // 데이터 생성
-        jobs.value = generateJobs(1000);
+        jobs.value = generateJobs(10000);
     
         // DOM 업데이트 대기
         await nextTick();
