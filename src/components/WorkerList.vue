@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { Worker } from "../utils/mockData";
+import { ATTENDANCE_STATUS_LABELS } from "../utils/constants";
 
 defineProps<{ workers: Worker[] }>();
 </script>
@@ -41,14 +42,7 @@ defineProps<{ workers: Worker[] }>();
               worker.attendanceStatus === 'OFF_DUTY',
           }"
         >
-          {{
-            {
-              APPLIED: "지원완료",
-              ON_DUTY: "출근완료",
-              OFF_DUTY: "퇴근완료",
-              NO_SHOW: "무단결근",
-            }[worker.attendanceStatus]
-          }}
+          {{ ATTENDANCE_STATUS_LABELS[worker.attendanceStatus] }}
         </span>
       </div>
 
