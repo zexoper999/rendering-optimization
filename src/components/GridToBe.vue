@@ -1,17 +1,16 @@
 <script setup lang="ts">
-import { ref, onMounted, nextTick } from "vue";
-import { generateJobs, type Job } from "../utils/mockData";
+import { ref, onMounted } from "vue";
 import JobCard from "./JobCard.vue";
 import Header from "./Header.vue";
 import { useVirtualizer } from "@tanstack/vue-virtual";
 import { useTheme } from "../composables/useTheme";
+import { useDataLoader } from "../composables/useDataLoader";
 
-const jobs = ref<Job[]>([]);
-const loading = ref(true);
-const renderTime = ref(0);
+// 다크모드 컴포저블
+const { toggleDarkMode } = useTheme(true);
 
-// 다크모드 컴포저블 사용
-const { isDark, toggleDarkMode } = useTheme(true);
+// 데이터 로딩 컴포저블
+const { jobs, loading, renderTime, loadData } = useDataLoader();
 
 // 가상 스크롤을 위한 부모 컨테이너 참조
 const parentRef = ref<HTMLElement | null>(null);
@@ -25,24 +24,6 @@ const rowVirtualizer = useVirtualizer({
   estimateSize: () => 140,
   overscan: 5,
 });
-
-const loadData = async () => {
-  loading.value = true;
-  jobs.value = [];
-
-  setTimeout(async () => {
-    const start = performance.now();
-
-    jobs.value = generateJobs(10000);
-    await nextTick();
-
-    setTimeout(() => {
-      const end = performance.now();
-      renderTime.value = Math.round(end - start);
-      loading.value = false;
-    }, 0);
-  }, 100);
-};
 
 onMounted(() => {
   loadData();
