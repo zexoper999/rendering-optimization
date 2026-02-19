@@ -11,7 +11,12 @@ import {
 } from "lucide-vue-next";
 import WorkerList from "./WorkerList.vue";
 
-const props = defineProps<{ job: Job }>();
+// Props 타입 정의
+interface JobCardProps {
+  job: Job;
+}
+
+const props = defineProps<JobCardProps>();
 const isOpen = ref(false);
 
 const progress = computed(() => {

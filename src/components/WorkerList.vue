@@ -2,7 +2,12 @@
 import type { Worker } from "../utils/mockData";
 import { ATTENDANCE_STATUS_LABELS } from "../utils/constants";
 
-defineProps<{ workers: Worker[] }>();
+// Props 타입 정의
+interface WorkerListProps {
+  workers: Worker[];
+}
+
+defineProps<WorkerListProps>();
 </script>
 
 <template>
