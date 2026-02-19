@@ -1,15 +1,25 @@
 <script setup lang="ts">
 import { Moon, Sun, RefreshCw } from "lucide-vue-next";
 
-defineProps<{
+// Props 타입 정의
+interface HeaderProps {
   count: number;
   renderTime: number;
   loading: boolean;
-}>();
+  isDark?: boolean;
+}
 
-const emit = defineEmits(["toggleDark", "reload"]);
+const props = withDefaults(defineProps<HeaderProps>(), {
+  isDark: false,
+});
 
-const isDark = document.documentElement.classList.contains("dark");
+// Emits 타입 정의
+interface HeaderEmits {
+  (e: "toggleDark"): void;
+  (e: "reload"): void;
+}
+
+const emit = defineEmits<HeaderEmits>();
 </script>
 
 <template>
@@ -25,18 +35,21 @@ const isDark = document.documentElement.classList.contains("dark");
       <div class="flex gap-2">
         <!-- 새로고침 버튼 -->
         <button
-          @click="$emit('reload')"
+          @click="emit('reload')"
           class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-300 transition-colors"
-          :disabled="loading"
+          :disabled="props.loading"
         >
-          <RefreshCw class="w-5 h-5" :class="{ 'animate-spin': loading }" />
+          <RefreshCw
+            class="w-5 h-5"
+            :class="{ 'animate-spin': props.loading }"
+          />
         </button>
         <!-- 다크 모드 토글 -->
         <button
-          @click="$emit('toggleDark')"
+          @click="emit('toggleDark')"
           class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-600 dark:text-yellow-400 transition-colors"
         >
-          <Moon v-if="!isDark" class="w-5 h-5" />
+          <Moon v-if="!props.isDark" class="w-5 h-5" />
           <Sun v-else class="w-5 h-5" />
         </button>
       </div>
@@ -46,7 +59,7 @@ const isDark = document.documentElement.classList.contains("dark");
       <p class="text-sm text-gray-500 dark:text-gray-400">
         총
         <span class="font-bold text-blue-600 dark:text-blue-400">{{
-          count.toLocaleString()
+          props.count.toLocaleString()
         }}</span
         >개 작업
       </p>
