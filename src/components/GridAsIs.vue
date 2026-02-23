@@ -6,7 +6,7 @@ import { useTheme } from "../composables/useTheme";
 import { useDataLoader } from "../composables/useDataLoader";
 
 // 다크모드 컴포저블
-const { toggleDarkMode } = useTheme(true);
+const { isDark, toggleDarkMode } = useTheme(true);
 
 // 데이터 로딩 컴포저블
 const { jobs, loading, renderTime, loadData } = useDataLoader();
@@ -25,6 +25,7 @@ onMounted(() => {
       :count="jobs.length"
       :render-time="renderTime"
       :loading="loading"
+      :is-dark="isDark"
       @toggle-dark="toggleDarkMode"
       @reload="loadData"
     />
